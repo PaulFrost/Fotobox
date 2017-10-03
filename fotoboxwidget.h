@@ -2,6 +2,7 @@
 #define FOTOBOXWIDGET_H
 
 #include <QWidget>
+#include <QPushButton>
 #include "camcontroller.h"
 
 class Widget : public QWidget
@@ -13,7 +14,8 @@ public:
 	~Widget();
 
 private:
-	CamController camController;
+	CamController m_camController;
+	QPushButton *m_buttonCapturePicture;
 };
 
 #endif // FOTOBOXWIDGET_H

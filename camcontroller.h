@@ -11,6 +11,7 @@ class CamController : public QObject
 
 public:
 	explicit CamController(QObject *parent = 0);
+	~CamController();
 
 
 private:
@@ -19,7 +20,9 @@ private:
 
 signals:
 
+
 public slots:
+	void capturePicture();
 
 
 };

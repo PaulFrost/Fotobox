@@ -18,7 +18,6 @@ ctx_status_func (GPContext*, const char *str, void*)
 
 CamController::CamController(QObject *parent) : QObject(parent)
 {
-	CameraText text;
 	CameraAbilitiesList *al;
 	CameraAbilities abilities;
 	GPPortInfoList	*portinfolist = NULL;
@@ -91,7 +90,7 @@ CamController::CamController(QObject *parent) : QObject(parent)
 		qFatal("gp_camera_set_port_info");
 	}
 
-	CameraFilePath cameraFilePath;
+
 
 	qDebug() << "Camera init.  Can take up to 10 seconds.";
 	retval = gp_camera_init(m_camera, m_context);
@@ -99,16 +98,20 @@ CamController::CamController(QObject *parent) : QObject(parent)
 	if (retval != GP_OK) {
 		qWarning() << "  Retval of gp_camera_init: " << retval;
 	}
+}
 
-	retval = gp_camera_capture(m_camera, GP_CAPTURE_IMAGE, &cameraFilePath,  m_context);
+CamController::~CamController()
+{
+	qDebug() << "Unrefing camera...";
+	gp_camera_unref (m_camera);
+}
+
+void CamController::capturePicture()
+{
+	CameraFilePath cameraFilePath;
+
+	int retval = gp_camera_capture(m_camera, GP_CAPTURE_IMAGE, &cameraFilePath,  m_context);
 	if (retval != GP_OK) {
 		qWarning() << "  Retval of gp_camera_capture: " << retval;
 	}
-
-	qDebug() << "Getting information about the driver...";
-	gp_camera_get_about (m_camera, &text, m_context);
-	qDebug() << text.text;
-
-	qDebug() << "Unrefing camera...";
-	gp_camera_unref (m_camera);
 }
