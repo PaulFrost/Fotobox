@@ -18,6 +18,8 @@ private:
 	Camera *m_camera;
 	GPContext *m_context;
 
+	void getFileFromCam(CameraFilePath *cameraFilePath);
+
 signals:
 
 

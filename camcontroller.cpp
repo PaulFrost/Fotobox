@@ -1,7 +1,9 @@
 #include "camcontroller.h"
 
 #include <QDebug>
+#include <QDateTime>
 
+#include <fcntl.h>
 
 static void
 ctx_error_func (GPContext*, const char *str, void*)
@@ -114,4 +116,39 @@ void CamController::capturePicture()
 	if (retval != GP_OK) {
 		qWarning() << "  Retval of gp_camera_capture: " << retval;
 	}
+
+	qDebug() << cameraFilePath.name << cameraFilePath.folder;
+
+	getFileFromCam(&cameraFilePath);
+}
+
+void CamController::getFileFromCam(CameraFilePath *cameraFilePath)
+{
+	int retval;
+	int fd;
+
+	QString dateTimeString = QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss");
+	dateTimeString.append(".jpg");
+
+	char fn[20];
+	strcpy(fn, dateTimeString.toUtf8().data());
+
+	CameraFile *cameraFile;
+
+	qDebug() << "Creating file ";
+
+	fd = open(fn, O_CREAT | O_WRONLY, 0644);
+	retval = gp_file_new_from_fd(&cameraFile, fd);
+	if (retval != GP_OK) {
+		qWarning() << "gp_file_new_from_fd: " << retval;
+	}
+
+	qDebug() << "Getting file ";
+	retval = gp_camera_file_get(m_camera, cameraFilePath->folder, cameraFilePath->name,
+				 GP_FILE_TYPE_NORMAL, cameraFile, m_context);
+	if (retval != GP_OK) {
+		qWarning() << " gp_camera_file_get: " << retval;
+	}
+
+	gp_file_free(cameraFile);
 }
