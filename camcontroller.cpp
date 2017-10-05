@@ -151,4 +151,8 @@ void CamController::getFileFromCam(CameraFilePath *cameraFilePath)
 	}
 
 	gp_file_free(cameraFile);
+
+	if (retval == GP_OK) {
+		emit pictureWasTaken(QString(fn));
+	}
 }

@@ -21,7 +21,7 @@ private:
 	void getFileFromCam(CameraFilePath *cameraFilePath);
 
 signals:
-
+	void pictureWasTaken(QString fileName);
 
 public slots:
 	void capturePicture();

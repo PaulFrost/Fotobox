@@ -3,6 +3,9 @@
 
 #include <QWidget>
 #include <QPushButton>
+#include <QGraphicsView>
+#include <QGraphicsScene>
+#include <QGraphicsPixmapItem>
 #include "camcontroller.h"
 
 class Widget : public QWidget
@@ -13,9 +16,23 @@ public:
 	Widget(QWidget *parent = 0);
 	~Widget();
 
+public slots:
+	void showPicture(QString picture);
+
+protected:
+	void resizeEvent(QResizeEvent *event);
+
 private:
 	CamController m_camController;
 	QPushButton *m_buttonCapturePicture;
+
+	QGraphicsView *m_view;
+	QGraphicsScene *m_scene;
+
+	QGraphicsPixmapItem *m_pixmapItem;
+	void calculatePixmapItemScale(const QPixmap &pixmap);
+
+	float m_sceneRatio;
 };
 
 #endif // FOTOBOXWIDGET_H
