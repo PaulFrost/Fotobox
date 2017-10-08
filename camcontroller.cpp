@@ -54,7 +54,7 @@ CamController::CamController(QObject *parent) : QObject(parent)
 		qFatal("gp_abilities_list_load");
 	}
 
-	m = gp_abilities_list_lookup_model (al, "Sony Alpha-A6000 (Control)");
+	m = gp_abilities_list_lookup_model (al,"USB PTP Class Camera");// "Sony Alpha-A6000 (Control)");
 	gp_abilities_list_get_abilities (al, m, &abilities);
 	gp_abilities_list_free (al);
 	gp_camera_set_abilities (m_camera, abilities);
@@ -112,6 +112,12 @@ void CamController::capturePicture()
 {
 	CameraFilePath cameraFilePath;
 
+	//cameraFilePath.name[0] = (char)0;
+	//cameraFilePath.folder[0] = (char)0;
+
+	//strcpy(cameraFilePath.name, "picture.jpg");
+	//strcpy(cameraFilePath.folder, "/");
+
 	int retval = gp_camera_capture(m_camera, GP_CAPTURE_IMAGE, &cameraFilePath,  m_context);
 	if (retval != GP_OK) {
 		qWarning() << "  Retval of gp_camera_capture: " << retval;
@@ -129,7 +135,7 @@ void CamController::getFileFromCam(CameraFilePath *cameraFilePath)
 
 	QString dateTimeString = QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss");
 	dateTimeString.append(".jpg");
-
+	dateTimeString.prepend("./");
 	char fn[20];
 	strcpy(fn, dateTimeString.toUtf8().data());
 
