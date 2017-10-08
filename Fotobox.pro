@@ -32,8 +32,18 @@ HEADERS  += fotoboxwidget.h \
 
 #LIBS += -L/usr/local/lib -lgphoto2.6
 
-LIBS += "/usr/local/lib/libgphoto2.dylib"
-LIBS += "/usr/local/lib/libgphoto2_port.12.dylib"
+unix:!macx {
+    LIBS += "/usr/local/lib/libgphoto2.so"
+    LIBS += "/usr/local/lib/libgphoto2_port.so"
+}
+
+macx: {
+    LIBS += "/usr/local/lib/libgphoto2.dylib"
+    LIBS += "/usr/local/lib/libgphoto2_port.12.dylib"
+}
+
+
+
 
 #win32:CONFIG(release, debug|release): LIBS += -L/usr/local/lib/release/ -lgphoto2.6
 #else:win32:CONFIG(debug, debug|release): LIBS += -L/usr/local/lib/debug/ -lgphoto2.6
