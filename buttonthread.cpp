@@ -5,13 +5,16 @@
 ButtonThread::ButtonThread(QObject *parent) : QObject(parent),
 	m_lastState(false)
 {
-	pullUpDnControl(3, PUD_DOWN);
+	wiringPiSetup();
+	pinMode(8, INPUT);
+	pullUpDnControl(8, PUD_DOWN);
 }
 
 void ButtonThread::checkButtonState()
 {
 	while(true){
-		bool buttonState = digitalRead(3);
+		qDebug()<< "check" << digitalRead(8);
+		bool buttonState = !digitalRead(8);
 
 		if(buttonState && !m_lastState){
 			qDebug() << "buttonPressed()";
