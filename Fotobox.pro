@@ -25,19 +25,27 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         fotoboxwidget.cpp \
-    camcontroller.cpp
+    camcontroller.cpp \
+    buttoncontroller.cpp \
+    buttonthread.cpp
 
 HEADERS  += fotoboxwidget.h \
-    camcontroller.h
+    camcontroller.h \
+    buttoncontroller.h \
+    buttonthread.h
 
 #LIBS += -L/usr/local/lib -lgphoto2.6
 
 unix:!macx {
     LIBS += "/usr/local/lib/libgphoto2.so"
     LIBS += "/usr/local/lib/libgphoto2_port.so"
+
+    LIBS += -lwiringPi
 }
 
 macx: {
+    INCLUDEPATH += "/Users/paulfrost/Developer/Libs/wiringPi/wiringPi"
+
     LIBS += "/usr/local/lib/libgphoto2.dylib"
     LIBS += "/usr/local/lib/libgphoto2_port.12.dylib"
 }

@@ -32,6 +32,9 @@ Widget::Widget(QWidget *parent)
 	m_scene->addItem(m_pixmapItem);
 	m_scene->update();
 
+	m_buttonController.startCheckingForButtonPress();
+	connect(&m_buttonController, SIGNAL(buttonWasPressed()), &m_camController, SLOT(capturePicture()));
+
 	connect(&m_camController, SIGNAL(pictureWasTaken(QString)), this, SLOT(showPicture(QString)));
 }
 

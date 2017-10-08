@@ -7,6 +7,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include "camcontroller.h"
+#include "buttoncontroller.h"
 
 class Widget : public QWidget
 {
@@ -23,6 +24,7 @@ protected:
 	void resizeEvent(QResizeEvent *event);
 
 private:
+	ButtonController m_buttonController;
 	CamController m_camController;
 	QPushButton *m_buttonCapturePicture;
 
