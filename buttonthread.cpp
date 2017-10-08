@@ -13,12 +13,12 @@ ButtonThread::ButtonThread(QObject *parent) : QObject(parent),
 void ButtonThread::checkButtonState()
 {
 	while(true){
-		qDebug()<< "check" << digitalRead(8);
 		bool buttonState = !digitalRead(8);
 
 		if(buttonState && !m_lastState){
 			qDebug() << "buttonPressed()";
 			emit buttonPressed();
+			QThread::msleep(1000);
 		}
 
 		m_lastState = buttonState;

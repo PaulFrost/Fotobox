@@ -136,7 +136,7 @@ void CamController::getFileFromCam(CameraFilePath *cameraFilePath)
 	QString dateTimeString = QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss");
 	dateTimeString.append(".jpg");
 	dateTimeString.prepend("./");
-	char fn[20];
+	char fn[40];
 	strcpy(fn, dateTimeString.toUtf8().data());
 
 	CameraFile *cameraFile;
