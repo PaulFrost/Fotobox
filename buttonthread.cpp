@@ -1,5 +1,19 @@
 #include "buttonthread.h"
 #include <QDebug>
+
+#ifdef __APPLE__
+
+ButtonThread::ButtonThread(QObject *parent) : QObject(parent),
+	m_lastState(false)
+{
+}
+
+
+void ButtonThread::checkButtonState()
+{
+}
+
+#elif
 #include <wiringPi.h>
 
 ButtonThread::ButtonThread(QObject *parent) : QObject(parent),
@@ -26,3 +40,4 @@ void ButtonThread::checkButtonState()
 		QThread::msleep(10);
 	}
 }
+#endif

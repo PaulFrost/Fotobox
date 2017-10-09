@@ -1,12 +1,21 @@
 #include "fotoboxwidget.h"
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QFileInfo>
 #include <QDebug>
 
 Widget::Widget(QWidget *parent)
 	: QWidget(parent),
+	  m_player(new QMediaPlayer(this)),
+	  m_videoItem(new QGraphicsVideoItem),
 	  m_pixmapItem(new QGraphicsPixmapItem)
 {
+	m_player->setVideoOutput(m_videoItem);
+	m_player->setMedia(QUrl::fromLocalFile(QFileInfo("FlashCountdown.mp4").absoluteFilePath()));
+
+
+//	m_videoItem->setZValue(1);
+
 	m_scene = new QGraphicsScene();
 	m_scene->setBackgroundBrush(QBrush(Qt::black));
 
@@ -21,7 +30,7 @@ Widget::Widget(QWidget *parent)
 
 	QPushButton *buttonTakePicture = new QPushButton("Take Picture");
 	buttonTakePicture->setFixedHeight(50);
-	connect(buttonTakePicture, SIGNAL(pressed()), &m_camController, SLOT(capturePicture()));
+	connect(buttonTakePicture, SIGNAL(pressed()), this, SLOT(startCountdown()));
 	vbl->addWidget(buttonTakePicture);
 
 	setLayout(vbl);
@@ -33,14 +42,21 @@ Widget::Widget(QWidget *parent)
 	m_scene->update();
 
 	m_buttonController.startCheckingForButtonPress();
-	connect(&m_buttonController, SIGNAL(buttonWasPressed()), &m_camController, SLOT(capturePicture()));
-
+	connect(&m_buttonController, SIGNAL(buttonWasPressed()), this, SLOT(startCountdown()));
 	connect(&m_camController, SIGNAL(pictureWasTaken(QString)), this, SLOT(showPicture(QString)));
+	connect(m_player, SIGNAL(positionChanged(qint64)), this, SLOT(mediaPositionChanged(qint64)));
 }
 
 Widget::~Widget()
 {
 
+}
+
+void Widget::startCountdown()
+{
+	m_videoItem->setSize(m_scene->sceneRect().size());
+	m_scene->addItem(m_videoItem);
+	m_player->play();
 }
 
 void Widget::calculatePixmapItemScale(const QPixmap &pixmap)
@@ -58,6 +74,14 @@ void Widget::calculatePixmapItemScale(const QPixmap &pixmap)
 	}
 
 	m_pixmapItem->setScale(scale);
+}
+
+void Widget::mediaPositionChanged(qint64 pos)
+{
+	if(pos == m_player->duration()){
+		m_scene->removeItem(m_videoItem);
+		m_camController.capturePicture();
+	}
 }
 
 void Widget::showPicture(QString picture)

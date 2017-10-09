@@ -6,6 +6,10 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
+
+#include <QMediaPlayer>
+#include <QGraphicsVideoItem>
+
 #include "camcontroller.h"
 #include "buttoncontroller.h"
 
@@ -18,10 +22,14 @@ public:
 	~Widget();
 
 public slots:
+	void startCountdown();
 	void showPicture(QString picture);
 
 protected:
 	void resizeEvent(QResizeEvent *event);
+
+private slots:
+	void mediaPositionChanged(qint64 pos);
 
 private:
 	ButtonController m_buttonController;
@@ -31,9 +39,11 @@ private:
 	QGraphicsView *m_view;
 	QGraphicsScene *m_scene;
 
+	QMediaPlayer *m_player;
+	QGraphicsVideoItem *m_videoItem;
+
 	QGraphicsPixmapItem *m_pixmapItem;
 	void calculatePixmapItemScale(const QPixmap &pixmap);
-
 	float m_sceneRatio;
 };
 
