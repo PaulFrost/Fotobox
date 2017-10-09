@@ -22,6 +22,7 @@ public:
 	~Widget();
 
 public slots:
+	void setChallenge();
 	void startCountdown();
 	void showPicture(QString picture);
 
@@ -39,6 +40,7 @@ private:
 	QGraphicsView *m_view;
 	QGraphicsScene *m_scene;
 
+	QGraphicsTextItem *m_textItem;
 	QMediaPlayer *m_player;
 	QGraphicsVideoItem *m_videoItem;
 

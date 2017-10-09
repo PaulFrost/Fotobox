@@ -2,10 +2,12 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QFileInfo>
+#include <QTimer>
 #include <QDebug>
 
 Widget::Widget(QWidget *parent)
 	: QWidget(parent),
+	  m_textItem(new QGraphicsTextItem),
 	  m_player(new QMediaPlayer(this)),
 	  m_videoItem(new QGraphicsVideoItem),
 	  m_pixmapItem(new QGraphicsPixmapItem)
@@ -30,7 +32,7 @@ Widget::Widget(QWidget *parent)
 
 	QPushButton *buttonTakePicture = new QPushButton("Take Picture");
 	buttonTakePicture->setFixedHeight(50);
-	connect(buttonTakePicture, SIGNAL(pressed()), this, SLOT(startCountdown()));
+	connect(buttonTakePicture, SIGNAL(pressed()), this, SLOT(setChallenge()));
 	vbl->addWidget(buttonTakePicture);
 
 	setLayout(vbl);
@@ -42,7 +44,7 @@ Widget::Widget(QWidget *parent)
 	m_scene->update();
 
 	m_buttonController.startCheckingForButtonPress();
-	connect(&m_buttonController, SIGNAL(buttonWasPressed()), this, SLOT(startCountdown()));
+	connect(&m_buttonController, SIGNAL(buttonWasPressed()), this, SLOT(setChallenge()));
 	connect(&m_camController, SIGNAL(pictureWasTaken(QString)), this, SLOT(showPicture(QString)));
 	connect(m_player, SIGNAL(positionChanged(qint64)), this, SLOT(mediaPositionChanged(qint64)));
 }
@@ -52,8 +54,36 @@ Widget::~Widget()
 
 }
 
+void Widget::setChallenge()
+{
+	m_scene->removeItem(m_pixmapItem);
+
+	QFont font("Helvetica");
+	font.setPixelSize(60);
+	m_textItem->setHtml("<h1>The challenge:</h1> </ br>nichts hören, nichts sehen, nichts sagen, nichts hören, nichts sehen, nichts sagen");
+	m_textItem->setDefaultTextColor(QColor(Qt::white));
+	m_textItem->setFont(font);
+	m_textItem->setTextWidth(m_scene->width());
+	m_scene->addItem(m_textItem);
+	m_scene->update();
+	QTimer::singleShot(4500,this, SLOT(startCountdown()));
+}
+
 void Widget::startCountdown()
 {
+
+	m_scene->removeItem(m_textItem);
+
+
+
+
+
+//	m_scene->addText("nichts hören, nichts sehen, nichts sagen",font);
+
+	m_scene->update();
+
+//	QThread::msleep(4500);
+
 	m_videoItem->setSize(m_scene->sceneRect().size());
 	m_scene->addItem(m_videoItem);
 	m_player->play();
@@ -80,6 +110,7 @@ void Widget::mediaPositionChanged(qint64 pos)
 {
 	if(pos == m_player->duration()){
 		m_scene->removeItem(m_videoItem);
+		m_scene->addItem(m_pixmapItem);
 		m_camController.capturePicture();
 	}
 }
