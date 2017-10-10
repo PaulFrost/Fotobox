@@ -27,12 +27,14 @@ SOURCES += main.cpp\
         fotoboxwidget.cpp \
     camcontroller.cpp \
     buttoncontroller.cpp \
-    buttonthread.cpp
+    buttonthread.cpp \
+    challengeparser.cpp
 
 HEADERS  += fotoboxwidget.h \
     camcontroller.h \
     buttoncontroller.h \
-    buttonthread.h
+    buttonthread.h \
+    challengeparser.h
 
 #LIBS += -L/usr/local/lib -lgphoto2.6
 

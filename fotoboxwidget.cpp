@@ -4,6 +4,7 @@
 #include <QFileInfo>
 #include <QTimer>
 #include <QDebug>
+#include "challengeparser.h"
 
 Widget::Widget(QWidget *parent)
 	: QWidget(parent),
@@ -15,8 +16,6 @@ Widget::Widget(QWidget *parent)
 	m_player->setVideoOutput(m_videoItem);
 	m_player->setMedia(QUrl::fromLocalFile(QFileInfo("FlashCountdown.mp4").absoluteFilePath()));
 
-
-//	m_videoItem->setZValue(1);
 
 	m_scene = new QGraphicsScene();
 	m_scene->setBackgroundBrush(QBrush(Qt::black));
@@ -56,11 +55,16 @@ Widget::~Widget()
 
 void Widget::setChallenge()
 {
+	ChallengeParser cp;
+
 	m_scene->removeItem(m_pixmapItem);
 
 	QFont font("Helvetica");
 	font.setPixelSize(60);
-	m_textItem->setHtml("<h1>The challenge:</h1> </ br>nichts hören, nichts sehen, nichts sagen, nichts hören, nichts sehen, nichts sagen");
+	m_textItem->setHtml(QString("<style>\
+							p {margin: 6em;}\
+							h1 {margin: 3em;}\
+						</style>&nbsp;</ br><h1>The challenge:</h1> <p> %1 </p>").arg(cp.getChallenge()));
 	m_textItem->setDefaultTextColor(QColor(Qt::white));
 	m_textItem->setFont(font);
 	m_textItem->setTextWidth(m_scene->width());
