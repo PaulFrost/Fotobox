@@ -18,7 +18,8 @@ ctx_status_func (GPContext*, const char *str, void*)
 }
 
 
-CamController::CamController(QObject *parent) : QObject(parent)
+CamController::CamController(QObject *parent) : QObject(parent),
+	m_camStatus(NotReady)
 {
 	CameraAbilitiesList *al;
 	CameraAbilities abilities;
@@ -54,7 +55,7 @@ CamController::CamController(QObject *parent) : QObject(parent)
 		qFatal("gp_abilities_list_load");
 	}
 
-	m = gp_abilities_list_lookup_model (al,"USB PTP Class Camera");// "Sony Alpha-A6000 (Control)");
+	m = gp_abilities_list_lookup_model (al,"Sony Alpha-A6000 (Control)");
 	gp_abilities_list_get_abilities (al, m, &abilities);
 	gp_abilities_list_free (al);
 	gp_camera_set_abilities (m_camera, abilities);
@@ -99,7 +100,10 @@ CamController::CamController(QObject *parent) : QObject(parent)
 
 	if (retval != GP_OK) {
 		qWarning() << "  Retval of gp_camera_init: " << retval;
+	} else {
+		m_camStatus = Active;
 	}
+
 }
 
 CamController::~CamController()
@@ -108,8 +112,15 @@ CamController::~CamController()
 	gp_camera_unref (m_camera);
 }
 
+CamController::CamStatus CamController::currentCamStatus() const
+{
+	return m_camStatus;
+}
+
 void CamController::capturePicture()
 {
+	m_camStatus = Capturing;
+
 	CameraFilePath cameraFilePath;
 
 	//cameraFilePath.name[0] = (char)0;
@@ -161,4 +172,6 @@ void CamController::getFileFromCam(CameraFilePath *cameraFilePath)
 	if (retval == GP_OK) {
 		emit pictureWasTaken(QString(fn));
 	}
+
+	m_camStatus = Active;
 }

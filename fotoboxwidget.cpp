@@ -11,7 +11,8 @@ Widget::Widget(QWidget *parent)
 	  m_textItem(new QGraphicsTextItem),
 	  m_player(new QMediaPlayer(this)),
 	  m_videoItem(new QGraphicsVideoItem),
-	  m_pixmapItem(new QGraphicsPixmapItem)
+	  m_pixmapItem(new QGraphicsPixmapItem),
+	  m_buttonPressed(false)
 {
 	m_player->setVideoOutput(m_videoItem);
 	m_player->setMedia(QUrl::fromLocalFile(QFileInfo("FlashCountdown.mp4").absoluteFilePath()));
@@ -44,17 +45,20 @@ Widget::Widget(QWidget *parent)
 
 	m_buttonController.startCheckingForButtonPress();
 	connect(&m_buttonController, SIGNAL(buttonWasPressed()), this, SLOT(setChallenge()));
+	connect(&m_serialButton, SIGNAL(captureButtonPressed()),this,SLOT(setChallenge()));
 	connect(&m_camController, SIGNAL(pictureWasTaken(QString)), this, SLOT(showPicture(QString)));
 	connect(m_player, SIGNAL(positionChanged(qint64)), this, SLOT(mediaPositionChanged(qint64)));
+	m_serialButton.setButtonStatus(SerialButton::Active);
 }
 
 Widget::~Widget()
 {
-
 }
 
 void Widget::setChallenge()
 {
+	m_serialButton.setButtonStatus(SerialButton::Processing);
+
 	ChallengeParser cp;
 
 	m_scene->removeItem(m_pixmapItem);
@@ -75,10 +79,10 @@ void Widget::setChallenge()
 
 void Widget::startCountdown()
 {
-
+	qDebug () << Q_FUNC_INFO;
 	m_scene->removeItem(m_textItem);
 
-
+	m_buttonPressed = true;
 
 
 
@@ -112,9 +116,14 @@ void Widget::calculatePixmapItemScale(const QPixmap &pixmap)
 
 void Widget::mediaPositionChanged(qint64 pos)
 {
-	if(pos == m_player->duration()){
-		m_scene->removeItem(m_videoItem);
-		m_scene->addItem(m_pixmapItem);
+	if(pos > m_player->duration() -1000 && m_buttonPressed){
+
+		m_buttonPressed = false;
+
+//		m_scene->removeItem(m_videoItem);
+//		m_player->stop();
+
+//		m_scene->addItem(m_pixmapItem);
 		m_camController.capturePicture();
 	}
 }
@@ -125,10 +134,11 @@ void Widget::showPicture(QString picture)
 
 	calculatePixmapItemScale(pixmap);
 
-	m_scene->removeItem(m_pixmapItem);
+	m_scene->removeItem(m_videoItem);
 	m_pixmapItem->setPixmap(pixmap);
 	m_scene->addItem(m_pixmapItem);
 	m_scene->update();
+	m_serialButton.setButtonStatus(SerialButton::Active);
 }
 
 void Widget::resizeEvent(QResizeEvent *event)

@@ -12,6 +12,7 @@ public:
 private:
 
 	bool m_lastState;
+
 signals:
 
 public slots:

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui multimediawidgets
+QT       += core gui multimediawidgets serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -28,13 +28,15 @@ SOURCES += main.cpp\
     camcontroller.cpp \
     buttoncontroller.cpp \
     buttonthread.cpp \
-    challengeparser.cpp
+    challengeparser.cpp \
+    serialbutton.cpp
 
 HEADERS  += fotoboxwidget.h \
     camcontroller.h \
     buttoncontroller.h \
     buttonthread.h \
-    challengeparser.h
+    challengeparser.h \
+    serialbutton.h
 
 #LIBS += -L/usr/local/lib -lgphoto2.6
 

@@ -9,14 +9,23 @@ class CamController : public QObject
 {
 	Q_OBJECT
 
+	enum CamStatus{
+		Active,
+		Capturing,
+		NotReady
+	};
+
 public:
 	explicit CamController(QObject *parent = 0);
 	~CamController();
 
+	CamStatus currentCamStatus() const;
 
 private:
 	Camera *m_camera;
 	GPContext *m_context;
+
+	CamStatus m_camStatus;
 
 	void getFileFromCam(CameraFilePath *cameraFilePath);
 

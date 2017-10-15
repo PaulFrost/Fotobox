@@ -12,6 +12,7 @@
 
 #include "camcontroller.h"
 #include "buttoncontroller.h"
+#include "serialbutton.h"
 
 class Widget : public QWidget
 {
@@ -34,8 +35,12 @@ private slots:
 
 private:
 	ButtonController m_buttonController;
+	SerialButton m_serialButton;
+
 	CamController m_camController;
 	QPushButton *m_buttonCapturePicture;
+
+	bool m_buttonPressed;
 
 	QGraphicsView *m_view;
 	QGraphicsScene *m_scene;
