@@ -132,6 +132,7 @@ void CamController::capturePicture()
 	int retval = gp_camera_capture(m_camera, GP_CAPTURE_IMAGE, &cameraFilePath,  m_context);
 	if (retval != GP_OK) {
 		qWarning() << "  Retval of gp_camera_capture: " << retval;
+		return;
 	}
 
 	qDebug() << cameraFilePath.name << cameraFilePath.folder;
@@ -158,6 +159,7 @@ void CamController::getFileFromCam(CameraFilePath *cameraFilePath)
 	retval = gp_file_new_from_fd(&cameraFile, fd);
 	if (retval != GP_OK) {
 		qWarning() << "gp_file_new_from_fd: " << retval;
+		return;
 	}
 
 	qDebug() << "Getting file ";
@@ -165,6 +167,7 @@ void CamController::getFileFromCam(CameraFilePath *cameraFilePath)
 				 GP_FILE_TYPE_NORMAL, cameraFile, m_context);
 	if (retval != GP_OK) {
 		qWarning() << " gp_camera_file_get: " << retval;
+		return;
 	}
 
 	gp_file_free(cameraFile);

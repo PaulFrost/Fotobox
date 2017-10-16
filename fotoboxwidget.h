@@ -9,6 +9,7 @@
 
 #include <QMediaPlayer>
 #include <QGraphicsVideoItem>
+#include <QTimer>
 
 #include "camcontroller.h"
 #include "buttoncontroller.h"
@@ -25,6 +26,7 @@ public:
 public slots:
 	void setChallenge();
 	void startCountdown();
+	void timeOut();
 	void showPicture(QString picture);
 
 protected:
@@ -36,6 +38,7 @@ private slots:
 private:
 	ButtonController m_buttonController;
 	SerialButton m_serialButton;
+	QTimer m_TimeoutTimer;
 
 	CamController m_camController;
 	QPushButton *m_buttonCapturePicture;

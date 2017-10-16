@@ -23,6 +23,7 @@ private:
 	QSerialPort *m_serialPort;
 
 	bool m_buttonPressed;
+	ButtonStatus m_buttonStatus;
 
 signals:
 	void captureButtonPressed();
