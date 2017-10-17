@@ -30,6 +30,7 @@ public slots:
 	void showPicture(QString picture);
 
 protected:
+	void closeEvent(QCloseEvent *event);
 	void resizeEvent(QResizeEvent *event);
 
 private slots:
@@ -40,7 +41,7 @@ private:
 	SerialButton m_serialButton;
 	QTimer m_TimeoutTimer;
 
-	CamController m_camController;
+	CamController *m_camController;
 	QPushButton *m_buttonCapturePicture;
 
 	bool m_buttonPressed;

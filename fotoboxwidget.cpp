@@ -3,16 +3,18 @@
 #include <QVBoxLayout>
 #include <QFileInfo>
 #include <QTimer>
+#include <QCloseEvent>
 #include <QDebug>
 #include "challengeparser.h"
 
 Widget::Widget(QWidget *parent)
 	: QWidget(parent),
+	  m_buttonPressed(false),
+	  m_camController(nullptr),
 	  m_textItem(new QGraphicsTextItem),
 	  m_player(new QMediaPlayer(this)),
-	  m_videoItem(new QGraphicsVideoItem),
-	  m_pixmapItem(new QGraphicsPixmapItem),
-	  m_buttonPressed(false)
+		m_videoItem(new QGraphicsVideoItem),
+	  m_pixmapItem(new QGraphicsPixmapItem)
 {
 	m_player->setVideoOutput(m_videoItem);
 	m_player->setMedia(QUrl::fromLocalFile(QFileInfo("FlashCountdown.mp4").absoluteFilePath()));
@@ -47,7 +49,7 @@ Widget::Widget(QWidget *parent)
 	m_buttonController.startCheckingForButtonPress();
 	connect(&m_buttonController, SIGNAL(buttonWasPressed()), this, SLOT(setChallenge()));
 	connect(&m_serialButton, SIGNAL(captureButtonPressed()),this,SLOT(setChallenge()));
-	connect(&m_camController, SIGNAL(pictureWasTaken(QString)), this, SLOT(showPicture(QString)));
+
 	connect(m_player, SIGNAL(positionChanged(qint64)), this, SLOT(mediaPositionChanged(qint64)));
 
 	QTimer::singleShot(1000, this, SLOT(timeOut()));
@@ -60,6 +62,9 @@ Widget::~Widget()
 void Widget::setChallenge()
 {
 	if(!m_buttonPressed) {
+		m_camController = new CamController(this);
+		connect(m_camController, &CamController::pictureWasTaken, this, &Widget::showPicture);
+
 		m_buttonPressed = true;
 
 		m_serialButton.setButtonStatus(SerialButton::Processing);
@@ -118,6 +123,12 @@ void Widget::timeOut()
 
 	m_serialButton.setButtonStatus(SerialButton::Active);
 	m_buttonPressed = false;
+
+	if(m_camController){
+		m_camController->disconnect();
+		delete m_camController;
+		m_camController = nullptr;
+	}
 }
 
 void Widget::calculatePixmapItemScale(const QPixmap &pixmap)
@@ -140,7 +151,7 @@ void Widget::calculatePixmapItemScale(const QPixmap &pixmap)
 void Widget::mediaPositionChanged(qint64 pos)
 {
 	if(pos > m_player->duration() -1000 && m_buttonPressed){
-		m_camController.capturePicture();
+		m_camController->capturePicture();
 	}
 }
 
@@ -163,6 +174,12 @@ void Widget::showPicture(QString picture)
 
 		QTimer::singleShot(4000, this, SLOT(timeOut()));
 	}
+}
+
+void Widget::closeEvent(QCloseEvent *event)
+{
+	m_serialButton.setButtonStatus(SerialButton::Off);
+	event->accept();
 }
 
 void Widget::resizeEvent(QResizeEvent *event)

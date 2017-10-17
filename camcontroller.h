@@ -12,6 +12,7 @@ class CamController : public QObject
 	enum CamStatus{
 		Active,
 		Capturing,
+		CamError,
 		NotReady
 	};
 

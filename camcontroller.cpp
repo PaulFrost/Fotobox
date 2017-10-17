@@ -100,6 +100,7 @@ CamController::CamController(QObject *parent) : QObject(parent),
 
 	if (retval != GP_OK) {
 		qWarning() << "  Retval of gp_camera_init: " << retval;
+		m_camStatus = CamError;
 	} else {
 		m_camStatus = Active;
 	}
@@ -110,6 +111,7 @@ CamController::~CamController()
 {
 	qDebug() << "Unrefing camera...";
 	gp_camera_unref (m_camera);
+	gp_context_unref(m_context);
 }
 
 CamController::CamStatus CamController::currentCamStatus() const
@@ -119,6 +121,10 @@ CamController::CamStatus CamController::currentCamStatus() const
 
 void CamController::capturePicture()
 {
+	if(m_camStatus == CamError){
+		return;
+	}
+
 	m_camStatus = Capturing;
 
 	CameraFilePath cameraFilePath;
@@ -132,6 +138,7 @@ void CamController::capturePicture()
 	int retval = gp_camera_capture(m_camera, GP_CAPTURE_IMAGE, &cameraFilePath,  m_context);
 	if (retval != GP_OK) {
 		qWarning() << "  Retval of gp_camera_capture: " << retval;
+		m_camStatus = CamError;
 		return;
 	}
 
