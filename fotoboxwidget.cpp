@@ -5,16 +5,28 @@
 #include <QTimer>
 #include <QCloseEvent>
 #include <QDebug>
+#include "settings.h"
 #include "challengeparser.h"
 
 Widget::Widget(QWidget *parent)
 	: QWidget(parent),
-	  m_buttonPressed(false),
 	  m_camController(nullptr),
+	  m_buttonPressed(false),
 	  m_textItem(new QGraphicsTextItem),
 	  m_player(new QMediaPlayer(this)),
-		m_videoItem(new QGraphicsVideoItem),
-	  m_pixmapItem(new QGraphicsPixmapItem)
+	  m_videoItem(new QGraphicsVideoItem),
+	  m_pixmapItem(new QGraphicsPixmapItem),
+	  m_settingChallangeStyle(Settings::challangeStyle()),
+	  m_settingPictureMainFoto(Settings::pictureMainFoto()),
+	  m_settingFontPixelSize(Settings::fontPixelSize()),
+	  m_settingTextYOffset(Settings::textYOffset()),
+	  m_settingTimeCaptureOffset(Settings::timeCaptureOffset()),
+	  m_settingTimeDelayAfterChallenge(Settings::timeDelayAfterChallenge()),
+	  m_settingTimeTimeoutChallenge(Settings::timeTimeoutChallenge()),
+	  m_settingTimeTimeoutAfterCapture(Settings::timeTimeoutAfterCapture()),
+	  m_settingTimeTimeoutBeforeCapture(Settings::timeTimeoutBeforeCapture()),
+	  m_settingVideoYOffset(Settings::videoYOffset()),
+	  m_settingVideoFilePath(Settings::videoFilePath())
 {
 	m_player->setVideoOutput(m_videoItem);
 	m_player->setMedia(QUrl::fromLocalFile(QFileInfo("FlashCountdown.mp4").absoluteFilePath()));
@@ -74,19 +86,16 @@ void Widget::setChallenge()
 		m_scene->removeItem(m_pixmapItem);
 
 		QFont font("Helvetica");
-		font.setPixelSize(60);
-		m_textItem->setHtml(QString("<style>\
-								p {margin: 120px; margin-left: 60px;}\
-								h2 {margin-left: 60px;}\
-							</style>&nbsp;</ br><h2>The challenge:</h2> <p> %1 </p>").arg(cp.getChallenge()));
+		font.setPixelSize(m_settingFontPixelSize);
+		m_textItem->setHtml(m_settingChallangeStyle.arg(cp.getChallenge()));
 		m_textItem->setDefaultTextColor(QColor(Qt::white));
 		m_textItem->setFont(font);
 		m_textItem->setTextWidth(m_scene->width());
-		m_textItem->setY(60);
+		m_textItem->setY(m_settingTextYOffset);
 		m_scene->addItem(m_textItem);
 		m_scene->update();
-		QTimer::singleShot(4500,this, SLOT(startCountdown()));
-		m_TimeoutTimer.start(18000);
+		QTimer::singleShot(m_settingTimeDelayAfterChallenge,this, SLOT(startCountdown()));
+		m_TimeoutTimer.start(m_settingTimeTimeoutChallenge);
 	}
 }
 
@@ -99,7 +108,7 @@ void Widget::startCountdown()
 //		m_scene->clear();
 
 		m_videoItem->setSize(m_scene->sceneRect().size());
-		m_videoItem->setY(-60);
+		m_videoItem->setY(m_settingVideoYOffset);
 		m_scene->addItem(m_videoItem);
 
 		m_player->play();
@@ -114,7 +123,7 @@ void Widget::timeOut()
 
 	m_scene->removeItem(m_pixmapItem);
 
-	QPixmap pixmap("IMG_1139.jpg");
+	QPixmap pixmap(m_settingPictureMainFoto);
 	m_pixmapItem->setPixmap(pixmap);
 	calculatePixmapItemScale(pixmap);
 
@@ -150,14 +159,14 @@ void Widget::calculatePixmapItemScale(const QPixmap &pixmap)
 
 void Widget::mediaPositionChanged(qint64 pos)
 {
-	if(pos > m_player->duration() -1000 && m_buttonPressed){
+	if(pos > m_player->duration() - qAbs(m_settingTimeCaptureOffset) && m_buttonPressed){
 		m_camController->capturePicture();
 	}
 }
 
 void Widget::showPicture(QString picture)
 {
-	m_TimeoutTimer.start(6000);
+	m_TimeoutTimer.start(m_settingTimeTimeoutBeforeCapture);
 	if(m_buttonPressed){
 		m_buttonPressed = false;
 
@@ -172,7 +181,7 @@ void Widget::showPicture(QString picture)
 		m_scene->update();
 
 
-		QTimer::singleShot(4000, this, SLOT(timeOut()));
+		QTimer::singleShot(m_settingTimeTimeoutAfterCapture, this, SLOT(timeOut()));
 	}
 }
 

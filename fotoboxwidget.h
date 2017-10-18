@@ -56,6 +56,18 @@ private:
 	QGraphicsPixmapItem *m_pixmapItem;
 	void calculatePixmapItemScale(const QPixmap &pixmap);
 	float m_sceneRatio;
+
+	const QString m_settingChallangeStyle;
+	const QString m_settingPictureMainFoto;
+	const int m_settingFontPixelSize;
+	const int m_settingTextYOffset;
+	const int m_settingTimeCaptureOffset;
+	const int m_settingTimeDelayAfterChallenge;
+	const int m_settingTimeTimeoutChallenge;
+	const int m_settingTimeTimeoutAfterCapture;
+	const int m_settingTimeTimeoutBeforeCapture;
+	const int m_settingVideoYOffset;
+	const QString m_settingVideoFilePath;
 };
 
 #endif // FOTOBOXWIDGET_H

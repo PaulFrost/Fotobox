@@ -28,8 +28,9 @@ private:
 
 	CamStatus m_camStatus;
 
-	void getFileFromCam(CameraFilePath *cameraFilePath);
+	const QString m_settingsDestFilePath;
 
+	void getFileFromCam(CameraFilePath *cameraFilePath);
 signals:
 	void pictureWasTaken(QString fileName);
 

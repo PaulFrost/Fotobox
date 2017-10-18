@@ -1,0 +1,16 @@
+{
+   "cameraName": "Sony Alpha-A6000 (Control)",
+   "challangeStyle": "<style> p { margin: 120px; margin-left: 60px;} h2 {margin-left: 60px;} </style>&nbsp;</ br><h2>The challenge:</h2> <p> %1 </p>",
+   "folderFotoDestination": "/Volumes/sdcard",
+   "pictureMainFoto": "Le-Mont-Saint-Michel.png",
+   "serialPortName": "/dev/cu.usbmodem1411",
+   "fontPixelSize": ﻿60.0,
+   "textYOffset": 60.0,
+   "timeCaptureOffset": 1000.0,
+   "timeDelayAfterChallenge": 4500.0,
+   "timeTimeoutChallenge": 18000.0,
+   "timeTimeoutAfterCapture": 4000.0,
+   "timeTimeoutBeforeCapture":﻿6000.0,
+   "videoYOffset": -60.0,
+   "videoFilePath": "FlashCountdown.mp4"
+}

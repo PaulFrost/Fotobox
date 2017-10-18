@@ -2,8 +2,10 @@
 #include <QDebug>
 #include <QTimer>
 
+#include "settings.h"
+
 SerialButton::SerialButton(QObject *parent) : QObject(parent),
-	m_serialPort(new QSerialPort("/dev/cu.usbmodem1411", this)),
+	m_serialPort(new QSerialPort(Settings::serialPortName(), this)),
 	m_buttonPressed(false)
 {
 	if(!m_serialPort->open(QIODevice::ReadWrite)){

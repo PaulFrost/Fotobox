@@ -29,14 +29,16 @@ SOURCES += main.cpp\
     buttoncontroller.cpp \
     buttonthread.cpp \
     challengeparser.cpp \
-    serialbutton.cpp
+    serialbutton.cpp \
+    settings.cpp
 
 HEADERS  += fotoboxwidget.h \
     camcontroller.h \
     buttoncontroller.h \
     buttonthread.h \
     challengeparser.h \
-    serialbutton.h
+    serialbutton.h \
+    settings.h
 
 #LIBS += -L/usr/local/lib -lgphoto2.6
 
@@ -63,3 +65,7 @@ macx: {
 
 INCLUDEPATH += /usr/local/include/gphoto2
 DEPENDPATH += /usr/local/include/gphoto2
+
+DISTFILES += \
+    challenges.json \
+    settings.json

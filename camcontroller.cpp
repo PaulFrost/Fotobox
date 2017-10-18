@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QDateTime>
 
+#include "settings.h"
 #include <fcntl.h>
 
 static void
@@ -19,7 +20,8 @@ ctx_status_func (GPContext*, const char *str, void*)
 
 
 CamController::CamController(QObject *parent) : QObject(parent),
-	m_camStatus(NotReady)
+	m_camStatus(NotReady),
+	m_settingsDestFilePath(Settings::folderFotoDestination())
 {
 	CameraAbilitiesList *al;
 	CameraAbilities abilities;
@@ -55,7 +57,7 @@ CamController::CamController(QObject *parent) : QObject(parent),
 		qFatal("gp_abilities_list_load");
 	}
 
-	m = gp_abilities_list_lookup_model (al,"Sony Alpha-A6000 (Control)");
+	m = gp_abilities_list_lookup_model (al, Settings::cameraName().toUtf8().data());//"Sony Alpha-A6000 (Control)");
 	gp_abilities_list_get_abilities (al, m, &abilities);
 	gp_abilities_list_free (al);
 	gp_camera_set_abilities (m_camera, abilities);
@@ -154,7 +156,7 @@ void CamController::getFileFromCam(CameraFilePath *cameraFilePath)
 
 	QString dateTimeString = QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss");
 	dateTimeString.append(".jpg");
-	dateTimeString.prepend("./");
+	dateTimeString.prepend(m_settingsDestFilePath);
 	char fn[40];
 	strcpy(fn, dateTimeString.toUtf8().data());
 
